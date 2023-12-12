@@ -241,8 +241,7 @@ where
     /// Generates a new [`SigningNonces`] from a pair of [`Nonce`]. This is
     /// useful internally since [`SigningNonces`] precompute the respective
     /// commitments.
-    #[cfg_attr(test, visibility::make(pub))]
-    pub(crate) fn from_nonces(hiding: Nonce<C>, binding: Nonce<C>) -> Self {
+    pub fn from_nonces(hiding: Nonce<C>, binding: Nonce<C>) -> Self {
         let hiding_commitment = (&hiding).into();
         let binding_commitment = (&binding).into();
         let commitments = SigningCommitments::new(hiding_commitment, binding_commitment);
