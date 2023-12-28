@@ -8,6 +8,7 @@ use crate::{
     random_nonzero, serialization::SerializableScalar, Challenge, Ciphersuite, Error, Field, Group,
     Scalar, Signature, VerifyingKey,
 };
+use crate::util::scalar_is_valid;
 
 /// A signing key for a Schnorr signature on a FROST [`Ciphersuite::Group`].
 #[derive(Copy, Clone, PartialEq, Eq)]
@@ -73,6 +74,11 @@ where
     /// Return the underlying scalar.
     pub fn to_scalar(self) -> <<<C as Ciphersuite>::Group as Group>::Field as Field>::Scalar {
         self.scalar
+    }
+
+    /// Check if the signing key is valid.
+    pub fn is_valid(&self) -> bool {
+        scalar_is_valid::<C>(&self.scalar)
     }
 }
 

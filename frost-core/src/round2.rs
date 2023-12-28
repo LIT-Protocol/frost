@@ -81,6 +81,11 @@ where
 
         Ok(())
     }
+
+    /// Tests if the signature share is valid
+    pub fn is_valid(&self) -> bool {
+        scalar_is_valid::<C>(&self.share)
+    }
 }
 
 impl<C> Debug for SignatureShare<C>

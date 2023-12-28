@@ -21,6 +21,7 @@ use crate::{
 
 #[cfg(feature = "serialization")]
 use crate::serialization::{Deserialize, Serialize};
+use crate::util::{element_is_valid, scalar_is_valid};
 
 use super::{keys::SigningShare, Identifier};
 
@@ -96,6 +97,11 @@ where
     pub fn serialize(&self) -> Vec<u8> {
         self.0.serialize()
     }
+
+    /// Checks if the nonce is valid.
+    pub fn is_valid(&self) -> bool {
+        scalar_is_valid::<C>(&self.0)
+    }
 }
 
 impl<C> Zeroize for Nonce<C>
@@ -138,6 +144,12 @@ where
     pub(crate) fn value(&self) -> Element<C> {
         self.0 .0
     }
+
+    /// Checks if the commitment is valid.
+    pub fn is_valid(&self) -> bool {
+        element_is_valid::<C>(&self.0)
+    }
+}
 
     /// Deserialize [`NonceCommitment`] from bytes
     pub fn deserialize(bytes: &[u8]) -> Result<Self, Error<C>> {
@@ -331,6 +343,13 @@ where
         binding_factor: &crate::BindingFactor<C>,
     ) -> GroupCommitmentShare<C> {
         GroupCommitmentShare::<C>(self.hiding.value() + (self.binding.value() * binding_factor.0))
+    }
+
+    /// Checks if the commitments are valid.
+    pub fn is_valid(&self) -> bool {
+        element_is_valid::<C>(&self.hiding.0)
+            && element_is_valid::<C>(&self.binding.0)
+            && self.hiding.0 != self.binding.0
     }
 }
 

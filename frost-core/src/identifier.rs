@@ -10,6 +10,7 @@ use alloc::vec::Vec;
 use crate::{
     serialization::SerializableScalar, Ciphersuite, Error, Field, FieldError, Group, Scalar,
 };
+use crate::util::scalar_is_valid;
 
 /// A FROST participant identifier.
 ///
@@ -70,6 +71,11 @@ where
     /// Returns an error if it attempts to deserialize zero.
     pub fn deserialize(bytes: &[u8]) -> Result<Self, Error<C>> {
         Ok(Self(SerializableScalar::deserialize(bytes)?))
+    }
+
+    /// Check if the identifier is valid aka not zero
+    pub fn is_valid(&self) -> bool {
+        scalar_is_valid::<C>(&self.0)
     }
 }
 

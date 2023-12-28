@@ -3,6 +3,7 @@
 use alloc::{string::ToString, vec::Vec};
 use derive_getters::Getters;
 
+use crate::util::{element_is_valid, scalar_is_valid};
 use crate::{Ciphersuite, Element, Error, Field, Group, Scalar};
 
 /// A Schnorr signature over some prime order group (or subgroup).
@@ -88,6 +89,11 @@ where
     /// Converts this signature to its byte serialization.
     pub fn serialize(&self) -> Result<Vec<u8>, Error<C>> {
         <C>::serialize_signature(self)
+    }
+
+    /// Check if the signature as valid values.
+    pub fn is_valid(&self) -> bool {
+        element_is_valid::<C>(&self.R) && scalar_is_valid::<C>(&self.z)
     }
 }
 
