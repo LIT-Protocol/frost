@@ -2,6 +2,7 @@
 
 use rand_core::{CryptoRng, RngCore};
 
+use crate::util::scalar_is_valid;
 use crate::{random_nonzero, Ciphersuite, Error, Field, Group, Scalar, Signature, VerifyingKey};
 
 /// A signing key for a Schnorr signature on a FROST [`Ciphersuite::Group`].
@@ -69,6 +70,11 @@ where
     #[cfg(feature = "internals")]
     pub fn to_scalar(self) -> <<<C as Ciphersuite>::Group as Group>::Field as Field>::Scalar {
         self.scalar
+    }
+
+    /// Check if the signing key is valid.
+    pub fn is_valid(&self) -> bool {
+        scalar_is_valid::<C>(&self.scalar)
     }
 }
 
