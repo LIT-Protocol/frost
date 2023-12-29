@@ -273,6 +273,11 @@ where
     pub fn binding(&self) -> &Nonce<C> {
         &self.binding
     }
+
+    /// Is this [`SigningNonces`] valid?
+    pub fn is_valid(&self) -> bool {
+        self.hiding.is_valid() && self.binding.is_valid() && self.commitments.is_valid()
+    }
 }
 
 /// Published by each participant in the first round of the signing protocol.
