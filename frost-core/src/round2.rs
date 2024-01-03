@@ -6,7 +6,7 @@ use crate as frost;
 use crate::{
     Challenge, Ciphersuite, Error, Field, Group, {round1, *},
 };
-use subtle::ConditionallyNegatable;
+// use subtle::ConditionallyNegatable;
 
 /// A participant's signature share, which the coordinator will aggregate with all other signer's
 /// shares into the joint signature.
@@ -109,7 +109,6 @@ pub(super) fn compute_signature_share<C: Ciphersuite>(
     lambda_i: <<<C as Ciphersuite>::Group as Group>::Field as Field>::Scalar,
     key_package: &keys::KeyPackage<C>,
     challenge: Challenge<C>,
-    y_is_odd: subtle::Choice,
 ) -> SignatureShare<C> {
     let z_share: <<C::Group as Group>::Field as Field>::Scalar = signer_nonces.hiding.to_scalar()
         + (signer_nonces.binding.to_scalar() * binding_factor.0)
@@ -183,7 +182,7 @@ pub fn sign<C: Ciphersuite>(
         lambda_i,
         &key_package,
         challenge,
-        <C::Group>::y_is_odd(&group_commitment.0),
+        // <C::Group>::y_is_odd(&group_commitment.0),
     );
 
     Ok(signature_share)
