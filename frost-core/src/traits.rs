@@ -7,6 +7,7 @@ use core::{
 
 use alloc::{borrow::Cow, collections::BTreeMap, vec::Vec};
 use rand_core::{CryptoRng, RngCore};
+use subtle::ConditionallyNegatable;
 
 use crate::{
     challenge,
@@ -29,6 +30,7 @@ pub trait Field: Copy + Clone {
     /// An element of the scalar field GF(p).
     /// The Eq/PartialEq implementation MUST be constant-time.
     type Scalar: Add<Output = Self::Scalar>
+        + ConditionallyNegatable
         + Copy
         + Clone
         + Eq
@@ -137,6 +139,18 @@ pub trait Group: Copy + Clone + PartialEq {
     ///
     /// <https://datatracker.ietf.org/doc/html/rfc9591#section-3.1-4.14>
     fn deserialize(buf: &Self::Serialization) -> Result<Self::Element, GroupError>;
+
+    /// The challenge bytes for a FROST ciphersuite. These may or may not match
+    /// the output from serialization like in the case of Taproot
+    fn challenge_bytes(element: &Self::Element) -> Vec<u8> {
+        Self::serialize(element).as_ref().to_vec()
+    }
+
+    /// Determine if the elements y is odd or not. Mostly doesn't apply
+    /// except for taproot
+    fn y_is_odd(_element: &Self::Element) -> subtle::Choice {
+        subtle::Choice::from(0u8)
+    }
 }
 
 /// An element of the [`Ciphersuite`] `C`'s [`Group`].
