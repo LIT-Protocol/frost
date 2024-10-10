@@ -23,7 +23,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 document-features = "0.2"
-ed448-goldilocks = { version = "0.11.0", package = "ed448-goldilocks-plus" }
+ed448-goldilocks = { version = "0.12.0", package = "ed448-goldilocks-plus" }
 frost-core = { path = "../frost-core", version = "1.0.0" }
 frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0" }
 rand_core = "0.6"
