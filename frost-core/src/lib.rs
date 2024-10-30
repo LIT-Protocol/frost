@@ -126,8 +126,8 @@ where
 {
     let mut preimage = Vec::new();
 
-    preimage.extend_from_slice(<C::Group>::serialize(R)?.as_ref());
-    preimage.extend_from_slice(<C::Group>::serialize(&verifying_key.to_element())?.as_ref());
+    preimage.extend_from_slice(<C::Group>::challenge_bytes(R).as_ref());
+    preimage.extend_from_slice(<C::Group>::challenge_bytes(&verifying_key.to_element()).as_ref());
     preimage.extend_from_slice(msg);
 
     Ok(Challenge(C::H2(&preimage[..])))
