@@ -7,6 +7,7 @@ use crate::{
     Challenge, Ciphersuite, Error, Field, Group, {round1, *},
 };
 use subtle::ConditionallyNegatable;
+use crate::util::scalar_is_valid;
 
 /// A participant's signature share, which the coordinator will aggregate with all other signer's
 /// shares into the joint signature.
@@ -85,7 +86,7 @@ where
 
     /// Tests if the signature share is valid
     pub fn is_valid(&self) -> bool {
-        scalar_is_valid::<C>(&self.share)
+        scalar_is_valid::<C>(&self.share.0)
     }
 }
 
@@ -111,15 +112,15 @@ pub(super) fn compute_signature_share<C: Ciphersuite>(
     challenge: Challenge<C>,
     y_is_odd: subtle::Choice,
 ) -> SignatureShare<C> {
-    let mut nonce = signer_nonces.hiding.0 + (signer_nonces.binding.0 * binding_factor.0);
+    let mut nonce = signer_nonces.hiding.to_scalar() + (signer_nonces.binding.to_scalar() * binding_factor.0);
     nonce.conditional_negate(y_is_odd);
-    let mut signing_share = key_package.signing_share.0;
-    signing_share.conditional_negate(<C::Group>::y_is_odd(&key_package.verifying_key.element));
+    let mut signing_share = key_package.signing_share.to_scalar();
+    signing_share.conditional_negate(<C::Group>::y_is_odd(&key_package.verifying_key.element.0));
 
     let z_share: <<C::Group as Group>::Field as Field>::Scalar =
-        nonce + (lambda_i * signing_share * challenge.0);
+        nonce + (lambda_i * signing_share * challenge.to_scalar());
 
-    SignatureShare::<C> { share: z_share }
+    SignatureShare::<C>::new(z_share)
 }
 
 /// Performed once by each participant selected for the signing operation.

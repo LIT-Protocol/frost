@@ -1,3 +1,4 @@
+#![cfg_attr(not(feature = "std"), no_std)]
 #![allow(non_snake_case)]
 #![deny(missing_docs)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
@@ -5,7 +6,10 @@
 #![doc = include_str!("../README.md")]
 #![doc = document_features::document_features!()]
 
-use std::collections::BTreeMap;
+extern crate alloc;
+
+use alloc::borrow::ToOwned;
+use alloc::collections::BTreeMap;
 
 use frost_rerandomized::RandomizedCiphersuite;
 use k256::elliptic_curve::subtle::Choice;
@@ -31,7 +35,9 @@ use frost_core as frost;
 mod tests;
 
 // Re-exports in our public API
-pub use frost_core::{serde, Ciphersuite, Field, FieldError, Group, GroupError};
+#[cfg(feature = "serde")]
+pub use frost_core::serde;
+pub use frost_core::{Ciphersuite, Field, FieldError, Group, GroupError};
 pub use rand_core;
 
 /// An error.
@@ -117,21 +123,15 @@ impl Group for Secp256K1TaprootGroup {
         ProjectivePoint::GENERATOR
     }
 
-    fn serialize(element: &Self::Element) -> Self::Serialization {
+    fn serialize(element: &Self::Element) -> Result<Self::Serialization, GroupError> {
+        if *element == Self::identity() {
+            return Err(GroupError::InvalidIdentityElement);
+        }
         let mut fixed_serialized = [0; 33];
         let serialized_point = element.to_affine().to_encoded_point(true);
         let serialized = serialized_point.as_bytes();
-        // Sanity check; either it takes all bytes or a single byte (identity).
-        assert!(serialized.len() == fixed_serialized.len() || serialized.len() == 1);
-        // Copy to the left of the buffer (i.e. pad the identity with zeroes).
-        // Note that identity elements shouldn't be serialized in FROST, but we
-        // do this padding so that this function doesn't have to return an error.
-        // If this encodes the identity, it will fail when deserializing.
-        {
-            let (left, _right) = fixed_serialized.split_at_mut(serialized.len());
-            left.copy_from_slice(serialized);
-        }
-        fixed_serialized
+        fixed_serialized.copy_from_slice(serialized);
+        Ok(fixed_serialized)
     }
 
     fn deserialize(buf: &Self::Serialization) -> Result<Self::Element, GroupError> {
@@ -264,9 +264,9 @@ impl Ciphersuite for Secp256K1Taproot {
         signature: &frost_core::Signature<Self>,
         public_key: &frost_core::VerifyingKey<Self>,
     ) -> Result<(), frost_core::Error<Self>> {
-        let vk = k256::schnorr::VerifyingKey::from_bytes(&public_key.serialize()[1..])
+        let vk = k256::schnorr::VerifyingKey::from_bytes(&public_key.serialize()?[1..])
             .map_err(|_| Error::MalformedVerifyingKey)?;
-        let sig = k256::schnorr::Signature::try_from(&signature.serialize()[1..])
+        let sig = k256::schnorr::Signature::try_from(&signature.serialize()?[1..])
             .map_err(|_| Error::MalformedSignature)?;
         vk.verify_prehash(msg, &sig)
             .map_err(|_| Error::InvalidSignature)
@@ -290,7 +290,6 @@ pub type Identifier = frost::Identifier<S>;
 /// FROST(secp256k1, SHA-256) keys, key generation, key shares.
 pub mod keys {
     use super::*;
-    use std::collections::BTreeMap;
 
     /// The identifier list to use when generating key shares.
     pub type IdentifierList<'a> = frost::keys::IdentifierList<'a, S>;

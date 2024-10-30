@@ -75,7 +75,7 @@ where
 
     /// Check if the identifier is valid aka not zero
     pub fn is_valid(&self) -> bool {
-        scalar_is_valid::<C>(&self.0)
+        scalar_is_valid::<C>(&self.0.0)
     }
 }
 

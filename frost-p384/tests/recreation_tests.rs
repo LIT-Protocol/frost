@@ -6,7 +6,7 @@ use frost_p384::{
         dkg::{round1, round2},
         KeyPackage, PublicKeyPackage, SecretShare,
     },
-    round1::SigningCommitments,
+    round1::{SigningCommitments, SigningNonces},
     round2::SignatureShare,
     SigningPackage,
 };
@@ -14,6 +14,16 @@ use frost_p384::{
 mod helpers;
 
 use helpers::samples;
+
+/// Check if SigningNonces can be recreated.
+#[test]
+fn check_signing_nonces_recreation() {
+    let nonces = samples::signing_nonces();
+    let hiding = nonces.hiding();
+    let binding = nonces.binding();
+    let new_nonces = SigningNonces::from_nonces(*hiding, *binding);
+    assert!(nonces == new_nonces);
+}
 
 /// Check if SigningCommitments can be recreated.
 #[test]
@@ -44,7 +54,7 @@ fn check_signature_share_recreation() {
 
     let encoded = signature_share.serialize();
 
-    let new_signature_share = SignatureShare::deserialize(encoded).unwrap();
+    let new_signature_share = SignatureShare::deserialize(&encoded).unwrap();
     assert!(signature_share == new_signature_share);
 }
 

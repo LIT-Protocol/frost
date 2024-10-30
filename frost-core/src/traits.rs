@@ -144,7 +144,7 @@ pub trait Group: Copy + Clone + PartialEq {
     /// The challenge bytes for a FROST ciphersuite. These may or may not match
     /// the output from serialization like in the case of Taproot
     fn challenge_bytes(element: &Self::Element) -> Vec<u8> {
-        Self::serialize(element).as_ref().to_vec()
+        Self::serialize(element).expect("to be serializable").as_ref().to_vec()
     }
 
     /// Determine if the elements y is odd or not. For now only applies

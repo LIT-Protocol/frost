@@ -82,7 +82,7 @@ where
 
     /// Check if the verifying key is valid.
     pub fn is_valid(&self) -> bool {
-        element_is_valid::<C>(&self.element)
+        element_is_valid::<C>(&self.element.0)
     }
 
     /// Computes the group public key given the group commitment.

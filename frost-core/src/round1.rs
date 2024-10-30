@@ -100,7 +100,7 @@ where
 
     /// Checks if the nonce is valid.
     pub fn is_valid(&self) -> bool {
-        scalar_is_valid::<C>(&self.0)
+        scalar_is_valid::<C>(&self.0.0)
     }
 }
 
@@ -147,9 +147,8 @@ where
 
     /// Checks if the commitment is valid.
     pub fn is_valid(&self) -> bool {
-        element_is_valid::<C>(&self.0)
+        element_is_valid::<C>(&self.0.0)
     }
-}
 
     /// Deserialize [`NonceCommitment`] from bytes
     pub fn deserialize(bytes: &[u8]) -> Result<Self, Error<C>> {
@@ -352,8 +351,8 @@ where
 
     /// Checks if the commitments are valid.
     pub fn is_valid(&self) -> bool {
-        element_is_valid::<C>(&self.hiding.0)
-            && element_is_valid::<C>(&self.binding.0)
+        element_is_valid::<C>(&self.hiding.0.0)
+            && element_is_valid::<C>(&self.binding.0.0)
             && self.hiding.0 != self.binding.0
     }
 }

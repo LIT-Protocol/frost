@@ -21,6 +21,7 @@ long-term secret share that must be kept secret, and a [`PublicKeyPackage`]
 that is public (and will be the same between all participants). With those
 they can proceed to sign messages with FROST.
 
+
 ## Example
 
 ```rust
