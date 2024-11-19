@@ -18,7 +18,6 @@ use frost_core as frost;
 use ark_serialize::{CanonicalDeserialize, CanonicalSerialize};
 use decaf377::{Element, Fr};
 use num_traits::{One, Zero};
-use std::io::Cursor;
 
 // Re-exports in our public API
 #[cfg(feature = "serde")]
@@ -118,17 +117,15 @@ impl Group for Decaf377Group {
         if element.is_identity() {
             return Err(GroupError::InvalidIdentityElement);
         }
-        let out = [0u8; 32];
-        let mut writer = Cursor::new(out);
+        let mut out = [0u8; 32];
         element
-            .serialize_compressed(&mut writer)
+            .serialize_compressed(&mut out[..])
             .map_err(|_| GroupError::MalformedElement)?;
         Ok(out)
     }
 
     fn deserialize(buf: &Self::Serialization) -> Result<Self::Element, GroupError> {
-        let mut reader = Cursor::new(buf);
-        let point = Element::deserialize_compressed(&mut reader)
+        let point = Element::deserialize_compressed(&buf[..])
             .map_err(|_| GroupError::MalformedElement)?;
 
         if point.is_identity() {
