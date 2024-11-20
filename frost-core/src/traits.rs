@@ -144,7 +144,10 @@ pub trait Group: Copy + Clone + PartialEq {
     /// The challenge bytes for a FROST ciphersuite. These may or may not match
     /// the output from serialization like in the case of Taproot
     fn challenge_bytes(element: &Self::Element) -> Vec<u8> {
-        Self::serialize(element).expect("to be serializable").as_ref().to_vec()
+        Self::serialize(element)
+            .expect("to be serializable")
+            .as_ref()
+            .to_vec()
     }
 
     /// Determine if the elements y is odd or not. For now only applies
@@ -381,6 +384,7 @@ pub trait Ciphersuite: Copy + Clone + PartialEq + Debug + 'static {
         lambda_i: <<Self::Group as Group>::Field as Field>::Scalar,
         key_package: &KeyPackage<Self>,
         challenge: Challenge<Self>,
+        y_is_odd: subtle::Choice,
     ) -> round2::SignatureShare<Self> {
         round2::compute_signature_share(
             signer_nonces,
@@ -388,6 +392,7 @@ pub trait Ciphersuite: Copy + Clone + PartialEq + Debug + 'static {
             lambda_i,
             key_package,
             challenge,
+            y_is_odd,
         )
     }
 

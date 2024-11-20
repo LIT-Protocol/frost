@@ -14,6 +14,7 @@ use alloc::vec::Vec;
 
 use frost_rerandomized::RandomizedCiphersuite;
 use k256::elliptic_curve::ops::Reduce;
+use k256::elliptic_curve::subtle;
 use k256::{
     elliptic_curve::{
         bigint::U256,
@@ -403,6 +404,7 @@ impl Ciphersuite for Secp256K1Sha256TR {
         lambda_i: <<Self::Group as Group>::Field as Field>::Scalar,
         key_package: &frost::keys::KeyPackage<S>,
         challenge: Challenge<S>,
+        y_is_odd: subtle::Choice,
     ) -> round2::SignatureShare {
         let signer_nonces = if !group_commitment.has_even_y() {
             negate_nonces(signer_nonces)
@@ -416,6 +418,7 @@ impl Ciphersuite for Secp256K1Sha256TR {
             lambda_i,
             key_package,
             challenge,
+            y_is_odd,
         )
     }
 

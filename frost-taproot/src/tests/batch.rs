@@ -2,7 +2,6 @@ use rand::thread_rng;
 
 use crate::*;
 
-
 #[test]
 fn check_batch_verify() {
     let rng = thread_rng();

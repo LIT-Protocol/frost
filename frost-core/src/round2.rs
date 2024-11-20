@@ -3,11 +3,11 @@
 use core::fmt::{self, Debug};
 
 use crate as frost;
+use crate::util::scalar_is_valid;
 use crate::{
     Challenge, Ciphersuite, Error, Field, Group, {round1, *},
 };
 use subtle::ConditionallyNegatable;
-use crate::util::scalar_is_valid;
 
 /// A participant's signature share, which the coordinator will aggregate with all other signer's
 /// shares into the joint signature.
@@ -112,7 +112,8 @@ pub(super) fn compute_signature_share<C: Ciphersuite>(
     challenge: Challenge<C>,
     y_is_odd: subtle::Choice,
 ) -> SignatureShare<C> {
-    let mut nonce = signer_nonces.hiding.to_scalar() + (signer_nonces.binding.to_scalar() * binding_factor.0);
+    let mut nonce =
+        signer_nonces.hiding.to_scalar() + (signer_nonces.binding.to_scalar() * binding_factor.0);
     nonce.conditional_negate(y_is_odd);
     let mut signing_share = key_package.signing_share.to_scalar();
     signing_share.conditional_negate(<C::Group>::y_is_odd(&key_package.verifying_key.element.0));

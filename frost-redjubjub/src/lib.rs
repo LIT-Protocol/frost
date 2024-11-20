@@ -126,7 +126,7 @@ impl Group for JubjubGroup {
         if *element == Self::identity() {
             return Err(GroupError::InvalidIdentityElement);
         }
-	    Ok(element.to_bytes())
+        Ok(element.to_bytes())
     }
 
     fn deserialize(buf: &Self::Serialization) -> Result<Self::Element, GroupError> {

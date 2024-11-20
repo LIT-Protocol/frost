@@ -123,7 +123,7 @@ where
 
     /// Verifies that a signing share is valid aka not zero
     pub fn is_valid(&self) -> bool {
-        scalar_is_valid::<C>(&self.0.0)
+        scalar_is_valid::<C>(&self.0 .0)
     }
 }
 
@@ -221,7 +221,7 @@ where
 
     /// Verifies that a verifying share is valid aka not zero or the base point
     pub fn is_valid(&self) -> bool {
-        element_is_valid::<C>(&self.0.0)
+        element_is_valid::<C>(&self.0 .0)
     }
 }
 
@@ -286,7 +286,7 @@ where
 
     /// Verifies that a coefficient commitment is valid aka not zero or the base point
     pub fn is_valid(&self) -> bool {
-        element_is_valid::<C>(&self.0.0)
+        element_is_valid::<C>(&self.0 .0)
     }
 }
 

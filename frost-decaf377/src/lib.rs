@@ -125,8 +125,8 @@ impl Group for Decaf377Group {
     }
 
     fn deserialize(buf: &Self::Serialization) -> Result<Self::Element, GroupError> {
-        let point = Element::deserialize_compressed(&buf[..])
-            .map_err(|_| GroupError::MalformedElement)?;
+        let point =
+            Element::deserialize_compressed(&buf[..]).map_err(|_| GroupError::MalformedElement)?;
 
         if point.is_identity() {
             Err(GroupError::InvalidIdentityElement)

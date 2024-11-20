@@ -3,7 +3,6 @@ use lazy_static::lazy_static;
 use rand::thread_rng;
 use serde_json::Value;
 
-
 #[test]
 fn check_zero_key_fails() {
     frost_core::tests::ciphersuite_generic::check_zero_key_fails::<P384Sha384>();

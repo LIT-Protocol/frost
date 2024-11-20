@@ -4,11 +4,11 @@ use alloc::vec::Vec;
 
 use rand_core::{CryptoRng, RngCore};
 
+use crate::util::scalar_is_valid;
 use crate::{
     random_nonzero, serialization::SerializableScalar, Challenge, Ciphersuite, Error, Field, Group,
     Scalar, Signature, VerifyingKey,
 };
-use crate::util::scalar_is_valid;
 
 /// A signing key for a Schnorr signature on a FROST [`Ciphersuite::Group`].
 #[derive(Copy, Clone, PartialEq, Eq)]
