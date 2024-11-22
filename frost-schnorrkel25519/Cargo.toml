@@ -1,5 +1,5 @@
 [package]
-name = "frost-ristretto255"
+name = "frost-schnorrkel25519"
 edition = "2021"
 # When releasing to crates.io:
 # - Update html_root_url
@@ -19,11 +19,13 @@ features = ["serde"]
 rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
+byte-strings = "0.3"
 curve25519-dalek = { version = "=4.2.2", features = ["serde", "rand_core"], package = "curve25519-dalek-ml" }
 frost-core = { path = "../frost-core", version = "2.0.0", default-features = false }
 frost-rerandomized = { path = "../frost-rerandomized", version = "2.0.0", default-features = false }
+merlin = "3"
 rand_core = "0.6"
-sha2 = { version = "0.10.2", default-features = false }
+schnorrkel = "0.11"
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }

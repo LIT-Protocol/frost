@@ -9,6 +9,7 @@ members = [
     "frost-redjubjub",
     "frost-decaf377",
     "frost-ristretto255",
+    "frost-schnorrkel25519",
     "frost-secp256k1",
     "frost-secp256k1-tr",
     "frost-rerandomized",
