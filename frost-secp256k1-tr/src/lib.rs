@@ -1,3 +1,4 @@
+#![cfg_attr(not(feature = "std"), no_std)]
 #![allow(non_snake_case)]
 #![deny(missing_docs)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
@@ -7,10 +8,8 @@
 
 extern crate alloc;
 
-use alloc::borrow::Cow;
-use alloc::borrow::ToOwned;
-use alloc::collections::BTreeMap;
-use alloc::vec::Vec;
+use alloc::vec;
+use alloc::{borrow::Cow, collections::BTreeMap, vec::Vec};
 
 use frost_rerandomized::RandomizedCiphersuite;
 use k256::elliptic_curve::ops::Reduce;
@@ -169,9 +168,9 @@ fn hash_to_array(inputs: &[&[u8]]) -> [u8; 32] {
     output
 }
 
-fn hash_to_scalar(domain: &[u8], msg: &[u8]) -> Scalar {
+fn hash_to_scalar(domain: &[&[u8]], msg: &[u8]) -> Scalar {
     let mut u = [Secp256K1ScalarField::zero()];
-    hash_to_field::<ExpandMsgXmd<Sha256>, Scalar>(&[msg], &[domain], &mut u)
+    hash_to_field::<ExpandMsgXmd<Sha256>, Scalar>(&[msg], domain, &mut u)
         .expect("should never return error according to error cases described in ExpandMsgXmd");
     u[0]
 }
@@ -210,7 +209,11 @@ fn tweak<T: AsRef<[u8]>>(
     merkle_root: Option<T>,
 ) -> Scalar {
     match merkle_root {
-        None => Secp256K1ScalarField::zero(),
+        None => {
+            let mut hasher = tagged_hash("TapTweak");
+            hasher.update(public_key.to_affine().x());
+            hasher_to_scalar(hasher)
+        }
         Some(root) => {
             let mut hasher = tagged_hash("TapTweak");
             hasher.update(public_key.to_affine().x());
@@ -249,7 +252,7 @@ impl Ciphersuite for Secp256K1Sha256TR {
     ///
     /// [spec]: https://www.ietf.org/archive/id/draft-irtf-cfrg-frost-14.html#section-6.5-2.2.2.1
     fn H1(m: &[u8]) -> <<Self::Group as Group>::Field as Field>::Scalar {
-        hash_to_scalar((CONTEXT_STRING.to_owned() + "rho").as_bytes(), m)
+        hash_to_scalar(&[CONTEXT_STRING.as_bytes(), b"rho"], m)
     }
 
     /// H2 for FROST(secp256k1, SHA-256)
@@ -265,7 +268,7 @@ impl Ciphersuite for Secp256K1Sha256TR {
     ///
     /// [spec]: https://www.ietf.org/archive/id/draft-irtf-cfrg-frost-14.html#section-6.5-2.2.2.3
     fn H3(m: &[u8]) -> <<Self::Group as Group>::Field as Field>::Scalar {
-        hash_to_scalar((CONTEXT_STRING.to_owned() + "nonce").as_bytes(), m)
+        hash_to_scalar(&[CONTEXT_STRING.as_bytes(), b"nonce"], m)
     }
 
     /// H4 for FROST(secp256k1, SHA-256)
@@ -284,18 +287,12 @@ impl Ciphersuite for Secp256K1Sha256TR {
 
     /// HDKG for FROST(secp256k1, SHA-256)
     fn HDKG(m: &[u8]) -> Option<<<Self::Group as Group>::Field as Field>::Scalar> {
-        Some(hash_to_scalar(
-            (CONTEXT_STRING.to_owned() + "dkg").as_bytes(),
-            m,
-        ))
+        Some(hash_to_scalar(&[CONTEXT_STRING.as_bytes(), b"dkg"], m))
     }
 
     /// HID for FROST(secp256k1, SHA-256)
     fn HID(m: &[u8]) -> Option<<<Self::Group as Group>::Field as Field>::Scalar> {
-        Some(hash_to_scalar(
-            (CONTEXT_STRING.to_owned() + "id").as_bytes(),
-            m,
-        ))
+        Some(hash_to_scalar(&[CONTEXT_STRING.as_bytes(), b"id"], m))
     }
 
     // Sign, negating the key if required by BIP-340.
@@ -491,10 +488,9 @@ impl Ciphersuite for Secp256K1Sha256TR {
         // > key should commit to an unspendable script path instead of having
         // > no script path. This can be achieved by computing the output key
         // > point as Q = P + int(hashTapTweak(bytes(P)))G.
-        let merkle_root = [0u8; 0];
         Ok((
-            key_package.tweak(Some(&merkle_root)),
-            public_key_package.tweak(Some(&merkle_root)),
+            key_package.tweak::<&[u8]>(None),
+            public_key_package.tweak::<&[u8]>(None),
         ))
     }
 }
@@ -502,7 +498,7 @@ impl Ciphersuite for Secp256K1Sha256TR {
 impl RandomizedCiphersuite for Secp256K1Sha256TR {
     fn hash_randomizer(m: &[u8]) -> Option<<<Self::Group as Group>::Field as Field>::Scalar> {
         Some(hash_to_scalar(
-            (CONTEXT_STRING.to_owned() + "randomizer").as_bytes(),
+            &[CONTEXT_STRING.as_bytes(), b"randomizer"],
             m,
         ))
     }
@@ -516,7 +512,6 @@ pub type Identifier = frost::Identifier<S>;
 /// FROST(secp256k1, SHA-256) keys, key generation, key shares.
 pub mod keys {
     use super::*;
-    use std::collections::BTreeMap;
 
     /// The identifier list to use when generating key shares.
     pub type IdentifierList<'a> = frost::keys::IdentifierList<'a, S>;
@@ -798,6 +793,7 @@ pub mod keys {
     }
 
     pub mod dkg;
+    pub mod refresh;
     pub mod repairable;
 }
 
@@ -872,12 +868,8 @@ pub mod round2 {
         key_package: &keys::KeyPackage,
         merkle_root: Option<&[u8]>,
     ) -> Result<SignatureShare, Error> {
-        if merkle_root.is_some() {
-            let key_package = key_package.clone().tweak(merkle_root);
-            frost::round2::sign(signing_package, signer_nonces, &key_package)
-        } else {
-            frost::round2::sign(signing_package, signer_nonces, key_package)
-        }
+        let key_package = key_package.clone().tweak(merkle_root);
+        frost::round2::sign(signing_package, signer_nonces, &key_package)
     }
 }
 
@@ -914,12 +906,8 @@ pub fn aggregate_with_tweak(
     public_key_package: &keys::PublicKeyPackage,
     merkle_root: Option<&[u8]>,
 ) -> Result<Signature, Error> {
-    if merkle_root.is_some() {
-        let public_key_package = public_key_package.clone().tweak(merkle_root);
-        frost::aggregate(signing_package, signature_shares, &public_key_package)
-    } else {
-        frost::aggregate(signing_package, signature_shares, public_key_package)
-    }
+    let public_key_package = public_key_package.clone().tweak(merkle_root);
+    frost::aggregate(signing_package, signature_shares, &public_key_package)
 }
 
 /// A signing key for a Schnorr signature on FROST(secp256k1, SHA-256).

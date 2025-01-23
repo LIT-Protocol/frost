@@ -112,11 +112,6 @@ shares in a way that maintains the same group public key. Some applications are:
   in signing sessions with the others. (They can also then use the repair share
   functionality to issue a new share and move from 2-of-2 back to 2-of-3.)
 
-```admonish note
-This is also possible via Distributed Key Generation but this has not yet been
-implemented.
-```
-
 ```admonish danger
 It is critically important to keep in mind that the **Refresh Shares
 functionality does not "restore full security" to a group**. While the group
@@ -128,7 +123,7 @@ and Mallory is eventually excluded from the group and replaced with Bob, it is
 not enough to trust 2 out of 3 between Alice, Bob and Eve. **You also need to
 trust that Mallory won't collude with, say, Eve which could have kept her
 original pre-refresh share and they could both together recompute the original
-key and compromise the group.** If that's a unnaceptable risk to your use case,
+key and compromise the group.** If that's an unacceptable risk to your use case,
 you will need to migrate to a new group if that makes sense to your application.
 ```
 

@@ -335,7 +335,7 @@ where
         Self(coefficients)
     }
 
-    /// Returns serialized coefficent commitments
+    /// Returns serialized coefficient commitments
     pub fn serialize(&self) -> Result<Vec<Vec<u8>>, Error<C>> {
         self.0
             .iter()
@@ -511,11 +511,7 @@ pub fn generate_with_dealer<C: Ciphersuite, R: RngCore + CryptoRng>(
     identifiers: IdentifierList<C>,
     rng: &mut R,
 ) -> Result<(BTreeMap<Identifier<C>, SecretShare<C>>, PublicKeyPackage<C>), Error<C>> {
-    let mut bytes = [0; 64];
-    rng.fill_bytes(&mut bytes);
-
     let key = SigningKey::new(rng);
-
     split(&key, max_signers, min_signers, identifiers, rng)
 }
 

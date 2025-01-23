@@ -420,7 +420,7 @@ where
     ) -> Result<Vec<(Identifier<C>, Vec<u8>)>, Error<C>> {
         let mut binding_factor_input_prefix = Vec::new();
 
-        // The length of a serialized verifying key of the same cipersuite does
+        // The length of a serialized verifying key of the same ciphersuite does
         // not change between runs of the protocol, so we don't need to hash to
         // get a fixed length.
         binding_factor_input_prefix.extend_from_slice(verifying_key.serialize()?.as_ref());
@@ -569,7 +569,6 @@ where
 /// signature, if the coordinator themselves is a signer and misbehaves, they
 /// can avoid that step. However, at worst, this results in a denial of
 /// service attack due to publishing an invalid signature.
-
 pub fn aggregate<C>(
     signing_package: &SigningPackage<C>,
     signature_shares: &BTreeMap<Identifier<C>, round2::SignatureShare<C>>,

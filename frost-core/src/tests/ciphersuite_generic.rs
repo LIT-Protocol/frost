@@ -1,7 +1,8 @@
 //! Ciphersuite-generic test functions.
 #![allow(clippy::type_complexity)]
 
-use alloc::collections::BTreeMap;
+use alloc::{borrow::ToOwned, collections::BTreeMap, vec::Vec};
+use rand_core::{CryptoRng, RngCore};
 
 use crate as frost;
 use crate::keys::SigningShare;
@@ -10,8 +11,6 @@ use crate::{
     keys::PublicKeyPackage, Error, Field, Group, Identifier, Signature, SigningKey, SigningPackage,
     VerifyingKey,
 };
-use alloc::vec::Vec;
-use rand_core::{CryptoRng, RngCore};
 
 use crate::Ciphersuite;
 
@@ -566,7 +565,7 @@ fn check_part3_errors<C: Ciphersuite>(
 }
 
 /// Check that calling dkg::part3() with distinct sets of participants fail.
-fn check_part3_different_participants<C: Ciphersuite>(
+pub fn check_part3_different_participants<C: Ciphersuite>(
     max_signers: u16,
     round2_secret_packages: BTreeMap<Identifier<C>, frost::keys::dkg::round2::SecretPackage<C>>,
     received_round1_packages: BTreeMap<
