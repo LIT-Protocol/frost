@@ -567,7 +567,7 @@ where
 /// any secret information). Note that because the coordinator is trusted to
 /// report misbehaving parties in order to avoid publishing an invalid
 /// signature, if the coordinator themselves is a signer and misbehaves, they
-/// can avoid that step. However, at worst, this results in a denial of
+/// can avoid that step. However, at worst, this results in a denial-of-
 /// service attack due to publishing an invalid signature.
 pub fn aggregate<C>(
     signing_package: &SigningPackage<C>,
@@ -629,17 +629,94 @@ where
     // if the aggregate signature is valid (which should be the common case).
     #[cfg(feature = "cheater-detection")]
     if verification_result.is_err() {
+        let mut cheaters = Vec::new();
         detect_cheater(
             &group_commitment,
             &pubkeys,
             &signing_package,
             &signature_shares,
             &binding_factor_list,
+            &mut cheaters,
         )?;
     }
 
     #[cfg(not(feature = "cheater-detection"))]
     verification_result?;
+
+    Ok(signature)
+}
+
+#[cfg(feature = "cheater-detection")]
+/// Similar to aggregate but will report all the cheaters in the supplied array.
+/// Users only need to check it if this function returns an error.
+///
+/// If no error occurs then cheaters will be unmodified
+pub fn aggregate_report_all_cheaters<C>(
+    signing_package: &SigningPackage<C>,
+    signature_shares: &BTreeMap<Identifier<C>, round2::SignatureShare<C>>,
+    pubkeys: &keys::PublicKeyPackage<C>,
+    cheaters: &mut Vec<Identifier<C>>,
+) -> Result<Signature<C>, Error<C>>
+where
+    C: Ciphersuite,
+{
+    // Check if signing_package.signing_commitments and signature_shares have
+    // the same set of identifiers, and if they are all in pubkeys.verifying_shares.
+    if signing_package.signing_commitments().len() != signature_shares.len() {
+        return Err(Error::UnknownIdentifier);
+    }
+
+    if !signing_package.signing_commitments().keys().all(|id| {
+        return signature_shares.contains_key(id) && pubkeys.verifying_shares().contains_key(id);
+    }) {
+        return Err(Error::UnknownIdentifier);
+    }
+
+    let (signing_package, signature_shares, pubkeys) =
+        <C>::pre_aggregate(signing_package, signature_shares, pubkeys)?;
+
+    // Encodes the signing commitment list produced in round one as part of generating [`BindingFactor`], the
+    // binding factor.
+    let binding_factor_list: BindingFactorList<C> =
+        compute_binding_factor_list(&signing_package, &pubkeys.verifying_key, &[])?;
+    // Compute the group commitment from signing commitments produced in round one.
+    let group_commitment = compute_group_commitment(&signing_package, &binding_factor_list)?;
+
+    // The aggregation of the signature shares by summing them up, resulting in
+    // a plain Schnorr signature.
+    //
+    // Implements [`aggregate`] from the spec.
+    //
+    // [`aggregate`]: https://datatracker.ietf.org/doc/html/rfc9591#name-signature-share-aggregation
+    let mut z = <<C::Group as Group>::Field>::zero();
+
+    for signature_share in signature_shares.values() {
+        z = z + signature_share.to_scalar();
+    }
+
+    let signature = Signature {
+        R: group_commitment.0,
+        z,
+    };
+
+    // Verify the aggregate signature
+    let verification_result = pubkeys
+        .verifying_key
+        .verify(signing_package.message(), &signature);
+
+    // Only if the verification of the aggregate signature failed; verify each share to find the cheater.
+    // This approach is more efficient since we don't need to verify all shares
+    // if the aggregate signature is valid (which should be the common case).
+    if verification_result.is_err() {
+        detect_cheater(
+            &group_commitment,
+            &pubkeys,
+            &signing_package,
+            &signature_shares,
+            &binding_factor_list,
+            cheaters,
+        )?;
+    }
 
     Ok(signature)
 }
@@ -653,6 +730,7 @@ fn detect_cheater<C: Ciphersuite>(
     signing_package: &SigningPackage<C>,
     signature_shares: &BTreeMap<Identifier<C>, round2::SignatureShare<C>>,
     binding_factor_list: &BindingFactorList<C>,
+    cheaters: &mut Vec<Identifier<C>>,
 ) -> Result<(), Error<C>> {
     // Compute the per-message challenge.
     let challenge = <C>::challenge(
@@ -662,6 +740,7 @@ fn detect_cheater<C: Ciphersuite>(
     )?;
 
     // Verify the signature shares.
+    let mut err = Error::InvalidSignature;
     for (identifier, signature_share) in signature_shares {
         // Look up the public key for this signer, where `signer_pubkey` = _G.ScalarBaseMult(s[i])_,
         // and where s[i] is a secret share of the constant term of _f_, the secret polynomial.
@@ -670,7 +749,7 @@ fn detect_cheater<C: Ciphersuite>(
             .get(identifier)
             .ok_or(Error::UnknownIdentifier)?;
 
-        verify_signature_share_precomputed(
+        let res = verify_signature_share_precomputed(
             *identifier,
             signing_package,
             binding_factor_list,
@@ -678,11 +757,18 @@ fn detect_cheater<C: Ciphersuite>(
             signature_share,
             verifying_share,
             challenge,
-        )?;
+        );
+        if res.is_err() {
+            err = res.expect_err("Invalid signature");
+            cheaters.push(*identifier);
+        }
     }
 
-    // We should never reach here; but we return an error to be safe.
-    Err(Error::InvalidSignature)
+    if cheaters.is_empty() {
+        Ok(())
+    } else {
+        Err(err)
+    }
 }
 
 /// Verify a signature share for the given participant `identifier`,
