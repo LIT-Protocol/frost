@@ -716,6 +716,10 @@ where
             &binding_factor_list,
             cheaters,
         )?;
+        if cheaters.is_empty() {
+            // Unable to tell who the cheater is
+            return Err(verification_result.expect_err("Invalid signature"));
+        }
     }
 
     Ok(signature)
