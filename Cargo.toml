@@ -33,6 +33,7 @@ categories = ["cryptography"]
 
 [workspace.dependencies]
 criterion = "0.5"
+curve25519-dalek = { version = "=4.3.0", features = ["rand_core"], package = "curve25519-dalek-ml" }
 document-features = "0.2.7"
 hex = { version  = "0.4.3", default-features = false, features = ["alloc"] }
 insta = { version = "1.31.0", features = ["yaml"] }
