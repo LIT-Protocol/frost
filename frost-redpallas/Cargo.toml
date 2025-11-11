@@ -1,0 +1,52 @@
+[package]
+name = "frost-redpallas"
+edition.workspace = true
+
+version.workspace = true
+authors.workspace = true
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+categories.workspace = true
+keywords = ["cryptography", "crypto", "threshold", "signature"]
+description = "A Schnorr signature scheme over the Pallas curve that supports FROST."
+
+[package.metadata.docs.rs]
+features = ["serde"]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[dependencies]
+blake2b_simd = { version = "1", default-features = false }
+document-features.workspace = true
+group = "0.13"
+pasta_curves = { version = "0.5", git = "https://github.com/LIT-Protocol/pasta_curves", features = ["alloc", "serde"] }
+frost-core = { path = "../frost-core", version = "2.1.0", default-features = false }
+frost-rerandomized = { path = "../frost-rerandomized", version = "2.1.0", default-features = false }
+rand_core.workspace = true
+
+[dev-dependencies]
+criterion.workspace = true
+frost-core = { path = "../frost-core", version = "2.1.0", features = ["test-impl"] }
+frost-rerandomized = { path = "../frost-rerandomized", version = "2.1.0", features = ["test-impl"] }
+insta.workspace = true
+hex.workspace = true
+lazy_static.workspace = true
+proptest.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+serde_json.workspace = true
+
+[features]
+nightly = []
+default = ["serialization", "cheater-detection", "std"]
+#! ## Features
+## Enable standard library support.
+std = ["frost-core/std"]
+## Enable `serde` support for types that need to be communicated. You
+## can use `serde` to serialize structs with any encoder that supports
+## `serde` (e.g. JSON with `serde_json`).
+serde = ["frost-core/serde"]
+## Enable a default serialization format. Enables `serde`.
+serialization = ["serde", "frost-core/serialization", "frost-rerandomized/serialization"]
+## Enable cheater detection
+cheater-detection = ["frost-core/cheater-detection", "frost-rerandomized/cheater-detection"]
