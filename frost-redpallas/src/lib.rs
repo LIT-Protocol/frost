@@ -18,9 +18,7 @@ use frost_core as frost;
 
 use group::{ff::Field as FFField, ff::PrimeField};
 use group::{Group as GGroup, GroupEncoding};
-use pasta_curves::{
-    pallas::{Scalar, Point, Affine}
-};
+use pasta_curves::pallas::{Affine, Point, Scalar};
 
 // Re-exports in our public API
 #[cfg(feature = "serde")]
@@ -117,15 +115,17 @@ impl Group for PallasGroup {
     }
 
     fn generator() -> Self::Element {
-        let pt: Point =
-            Affine::from_bytes(&(constants::SPENDAUTHSIG_BASEPOINT_BYTES.into()))
-                .unwrap()
-                .into();
+        let pt: Point = Affine::from_bytes(&(constants::SPENDAUTHSIG_BASEPOINT_BYTES.into()))
+            .unwrap()
+            .into();
         pt
     }
 
-    fn serialize(element: &Self::Element) -> Self::Serialization {
-        element.to_bytes().into()
+    fn serialize(element: &Self::Element) -> Result<Self::Serialization, GroupError> {
+        if *element == Self::identity() {
+            return Err(GroupError::InvalidIdentityElement);
+        }
+        Ok(element.to_bytes().into())
     }
 
     fn deserialize(buf: &Self::Serialization) -> Result<Self::Element, GroupError> {
@@ -160,7 +160,10 @@ impl Ciphersuite for PallasBlake2b512 {
 
     /// H1 for FROST(Pallas, BLAKE2b-512)
     fn H1(m: &[u8]) -> <<Self::Group as Group>::Field as Field>::Scalar {
-        hash_to_scalar((CONTEXT_STRING.to_owned() + "FROST_RedPallasR").as_bytes(), m)
+        hash_to_scalar(
+            (CONTEXT_STRING.to_owned() + "FROST_RedPallasR").as_bytes(),
+            m,
+        )
     }
 
     /// H2 for FROST(Pallas, BLAKE2b-512)
@@ -170,7 +173,10 @@ impl Ciphersuite for PallasBlake2b512 {
 
     /// H3 for FROST(Pallas, BLAKE2b-512)
     fn H3(m: &[u8]) -> <<Self::Group as Group>::Field as Field>::Scalar {
-        hash_to_scalar((CONTEXT_STRING.to_owned() + "FROST_RedPallasN").as_bytes(), m)
+        hash_to_scalar(
+            (CONTEXT_STRING.to_owned() + "FROST_RedPallasN").as_bytes(),
+            m,
+        )
     }
 
     /// H4 for FROST(Pallas, BLAKE2b-512)
