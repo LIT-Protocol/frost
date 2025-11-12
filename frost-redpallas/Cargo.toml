@@ -20,14 +20,14 @@ blake2b_simd = { version = "1", default-features = false }
 document-features.workspace = true
 group = "0.13"
 pasta_curves = { version = "0.5", git = "https://github.com/LIT-Protocol/pasta_curves", features = ["alloc", "serde"] }
-frost-core = { path = "../frost-core", version = "2.1.0", default-features = false }
-frost-rerandomized = { path = "../frost-rerandomized", version = "2.1.0", default-features = false }
+frost-core = { path = "../frost-core", version = "2.2.0", default-features = false }
+frost-rerandomized = { path = "../frost-rerandomized", version = "2.2.0", default-features = false }
 rand_core.workspace = true
 
 [dev-dependencies]
 criterion.workspace = true
-frost-core = { path = "../frost-core", version = "2.1.0", features = ["test-impl"] }
-frost-rerandomized = { path = "../frost-rerandomized", version = "2.1.0", features = ["test-impl"] }
+frost-core = { path = "../frost-core", version = "2.2.0", features = ["test-impl"] }
+frost-rerandomized = { path = "../frost-rerandomized", version = "2.2.0", features = ["test-impl"] }
 insta.workspace = true
 hex.workspace = true
 lazy_static.workspace = true

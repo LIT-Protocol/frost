@@ -21,8 +21,8 @@ blake2b_simd = { version = "1", default-features = false }
 document-features.workspace = true
 group = "0.13"
 decaf377 = { version = "0.10", git = "https://github.com/LIT-Protocol/decaf377.git"  }
-frost-core = { path = "../frost-core", version = "2.1.0", default-features = false }
-frost-rerandomized = { path = "../frost-rerandomized", version = "2.1.0", default-features = false }
+frost-core = { path = "../frost-core", version = "2.2.0", default-features = false }
+frost-rerandomized = { path = "../frost-rerandomized", version = "2.2.0", default-features = false }
 num-traits = "0.2"
 rand_core.workspace = true
 sha2 = { version = "0.10.2", default-features = false }
