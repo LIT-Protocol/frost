@@ -6,9 +6,9 @@
 
 use alloc::collections::BTreeMap;
 
-use pasta_curves::pallas::Scalar;
+use lit_rust_crypto::pallas::Scalar;
 
-use crate::{frost, Ciphersuite, CryptoRng, Error, Identifier, PallasBlake2b512, RngCore};
+use crate::{Ciphersuite, CryptoRng, Error, Identifier, PallasBlake2b512, RngCore, frost};
 
 use super::{SecretShare, VerifiableSecretSharingCommitment};
 

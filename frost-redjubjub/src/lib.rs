@@ -16,10 +16,11 @@ use frost_rerandomized::RandomizedCiphersuite;
 
 use frost_core as frost;
 
-use group::cofactor::CofactorGroup;
-use group::{ff::Field as FFField, ff::PrimeField};
-use group::{Group as GGroup, GroupEncoding};
-use jubjub::{ExtendedPoint, SubgroupPoint};
+use lit_rust_crypto::{
+    ff::{Field as FFField, PrimeField},
+    group::{Group as GGroup, GroupEncoding, cofactor::CofactorGroup},
+    jubjub::{AffinePoint, ExtendedPoint, Scalar, SubgroupPoint},
+};
 
 // Re-exports in our public API
 #[cfg(feature = "serde")]
@@ -41,7 +42,7 @@ fn hash_to_array(inputs: &[&[u8]]) -> [u8; 64] {
     }
     *state.state.finalize().as_array()
 }
-fn hash_to_scalar(domain: &[u8], msg: &[u8]) -> jubjub::Scalar {
+fn hash_to_scalar(domain: &[u8], msg: &[u8]) -> Scalar {
     HStar::default().update(domain).update(msg).finalize()
 }
 
@@ -53,16 +54,16 @@ pub type Error = frost_rerandomized::frost_core::Error<JubjubBlake2b512>;
 pub struct JubjubScalarField;
 
 impl Field for JubjubScalarField {
-    type Scalar = jubjub::Scalar;
+    type Scalar = Scalar;
 
     type Serialization = [u8; 32];
 
     fn zero() -> Self::Scalar {
-        Self::Scalar::zero()
+        Scalar::zero()
     }
 
     fn one() -> Self::Scalar {
-        Self::Scalar::one()
+        Scalar::one()
     }
 
     fn invert(scalar: &Self::Scalar) -> Result<Self::Scalar, FieldError> {
@@ -71,7 +72,7 @@ impl Field for JubjubScalarField {
         if *scalar == <Self as Field>::zero() {
             Err(FieldError::InvalidZeroScalar)
         } else {
-            Ok(Self::Scalar::invert(scalar).unwrap())
+            Ok(Scalar::invert(scalar).unwrap())
         }
     }
 
@@ -88,7 +89,7 @@ impl Field for JubjubScalarField {
     }
 
     fn deserialize(buf: &Self::Serialization) -> Result<Self::Scalar, FieldError> {
-        match Self::Scalar::from_repr(*buf).into() {
+        match Scalar::from_repr(*buf).into() {
             Some(s) => Ok(s),
             None => Err(FieldError::MalformedScalar),
         }
@@ -115,10 +116,9 @@ impl Group for JubjubGroup {
     }
 
     fn generator() -> Self::Element {
-        let pt: ExtendedPoint =
-            jubjub::AffinePoint::from_bytes(&constants::SPENDAUTHSIG_BASEPOINT_BYTES)
-                .unwrap()
-                .into();
+        let pt: ExtendedPoint = AffinePoint::from_bytes(&constants::SPENDAUTHSIG_BASEPOINT_BYTES)
+            .unwrap()
+            .into();
         pt.into_subgroup().unwrap()
     }
 

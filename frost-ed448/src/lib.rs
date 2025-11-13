@@ -9,15 +9,15 @@ extern crate alloc;
 
 use std::collections::BTreeMap;
 
-use ed448_goldilocks::{
-    elliptic_curve::generic_array::{typenum::U114, GenericArray},
-    CompressedEdwardsY, EdwardsPoint, Scalar, ScalarBytes,
-};
 use frost_rerandomized::RandomizedCiphersuite;
+use lit_rust_crypto::ed448_goldilocks::{
+    CompressedEdwardsY, EdwardsPoint, Scalar, ScalarBytes,
+    elliptic_curve::generic_array::{GenericArray, typenum::U114},
+};
 use rand_core::{CryptoRng, RngCore};
 use sha3::{
-    digest::{ExtendableOutput, Update, XofReader},
     Shake256,
+    digest::{ExtendableOutput, Update, XofReader},
 };
 
 use frost_core as frost;

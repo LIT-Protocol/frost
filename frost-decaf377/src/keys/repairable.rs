@@ -6,9 +6,9 @@
 
 use alloc::collections::BTreeMap;
 
-use decaf377::Fr;
+use lit_rust_crypto::decaf377::Fr;
 
-use crate::{frost, Ciphersuite, CryptoRng, Decaf377Blake2b512, Error, Identifier, RngCore};
+use crate::{Ciphersuite, CryptoRng, Decaf377Blake2b512, Error, Identifier, RngCore, frost};
 
 use super::{SecretShare, VerifiableSecretSharingCommitment};
 

@@ -10,7 +10,7 @@
 // - Henry de Valence <hdevalence@hdevalence.ca>
 
 use blake2b_simd::{Params, State};
-use pasta_curves::pallas::Scalar;
+use lit_rust_crypto::pallas::Scalar;
 
 /// Provides H^star, the hash-to-scalar function used by RedDSA.
 pub struct HStar {

@@ -16,9 +16,9 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 document-features.workspace = true
-ed448-goldilocks = { version = "0.16", package = "ed448-goldilocks-plus" }
 frost-core = { path = "../frost-core", version = "2.2.0", default-features = false }
 frost-rerandomized = { path = "../frost-rerandomized", version = "2.2.0", default-features = false }
+lit-rust-crypto = { workspace = true, features = ["ed448-goldilocks-default"] }
 rand_core.workspace = true
 sha3 = { version = "0.10.6", default-features = false }
 

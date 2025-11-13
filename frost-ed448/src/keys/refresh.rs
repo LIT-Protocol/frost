@@ -4,7 +4,7 @@
 //! of all the remaining signers. This can be done using a Trusted Dealer or
 //! DKG (not yet implemented)
 
-use crate::{frost, Ciphersuite, CryptoRng, Error, Identifier, RngCore};
+use crate::{Ciphersuite, CryptoRng, Error, Identifier, RngCore, frost};
 use alloc::vec::Vec;
 
 use super::{KeyPackage, PublicKeyPackage, SecretShare};

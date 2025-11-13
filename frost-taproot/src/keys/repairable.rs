@@ -9,7 +9,7 @@ use alloc::collections::BTreeMap;
 // This is imported separately to make `gencode` work.
 // (if it were below, the position of the import would vary between ciphersuites
 //  after `cargo fmt`)
-use crate::{frost, Ciphersuite, CryptoRng, Identifier, RngCore, Scalar};
+use crate::{Ciphersuite, CryptoRng, Identifier, RngCore, Scalar, frost};
 use crate::{Error, Secp256K1Taproot};
 
 use super::{SecretShare, VerifiableSecretSharingCommitment};

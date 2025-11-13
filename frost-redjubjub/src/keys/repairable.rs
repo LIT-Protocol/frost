@@ -6,9 +6,9 @@
 
 use alloc::collections::BTreeMap;
 
-use jubjub::Scalar;
+use lit_rust_crypto::jubjub::Scalar;
 
-use crate::{frost, Ciphersuite, CryptoRng, Error, Identifier, JubjubBlake2b512, RngCore};
+use crate::{Ciphersuite, CryptoRng, Error, Identifier, JubjubBlake2b512, RngCore, frost};
 
 use super::{SecretShare, VerifiableSecretSharingCommitment};
 

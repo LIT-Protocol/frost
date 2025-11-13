@@ -8,12 +8,11 @@ use serde_json::Value;
 
 use crate as frost;
 use crate::{
-    compute_lagrange_coefficient,
+    Ciphersuite, Error, Field, Group, Identifier, Scalar, compute_lagrange_coefficient,
     keys::{
-        repairable::{repair_share_step_1, repair_share_step_2, repair_share_step_3},
         PublicKeyPackage, SecretShare, SigningShare,
+        repairable::{repair_share_step_1, repair_share_step_2, repair_share_step_3},
     },
-    Ciphersuite, Error, Field, Group, Identifier, Scalar,
 };
 
 /// We want to test that recover share matches the original share

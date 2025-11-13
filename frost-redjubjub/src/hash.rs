@@ -10,6 +10,7 @@
 // - Henry de Valence <hdevalence@hdevalence.ca>
 
 use blake2b_simd::{Params, State};
+use lit_rust_crypto::jubjub;
 
 /// Provides H^star, the hash-to-scalar function used by RedDSA.
 pub struct HStar {

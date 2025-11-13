@@ -9,11 +9,11 @@ use alloc::collections::{BTreeMap, BTreeSet};
 use alloc::vec::Vec;
 
 use crate::{
-    compute_lagrange_coefficient, Ciphersuite, CryptoRng, Error, Field, Group, Header, Identifier,
-    RngCore, Scalar,
+    Ciphersuite, CryptoRng, Error, Field, Group, Header, Identifier, RngCore, Scalar,
+    compute_lagrange_coefficient,
 };
 
-use super::{generate_coefficients, SecretShare, SigningShare, VerifiableSecretSharingCommitment};
+use super::{SecretShare, SigningShare, VerifiableSecretSharingCommitment, generate_coefficients};
 
 /// Step 1 of RTS.
 ///

@@ -18,9 +18,9 @@ use rand_core::{CryptoRng, RngCore};
 use zeroize::{DefaultIsZeroes, Zeroize};
 
 use crate::{
-    serialization::{SerializableElement, SerializableScalar},
     Ciphersuite, Element, Error, Field, Group, Header, Identifier, Scalar, SigningKey,
     VerifyingKey,
+    serialization::{SerializableElement, SerializableScalar},
 };
 
 #[cfg(feature = "serialization")]
@@ -102,7 +102,7 @@ where
     #[cfg_attr(feature = "internals", visibility::make(pub))]
     #[cfg_attr(docsrs, doc(cfg(feature = "internals")))]
     pub(crate) fn to_scalar(&self) -> Scalar<C> {
-        self.0 .0
+        self.0.0
     }
 
     /// Deserialize from bytes
@@ -123,7 +123,7 @@ where
 
     /// Verifies that a signing share is valid aka not zero
     pub fn is_valid(&self) -> bool {
-        scalar_is_valid::<C>(&self.0 .0)
+        scalar_is_valid::<C>(&self.0.0)
     }
 }
 
@@ -186,7 +186,7 @@ where
     #[cfg_attr(docsrs, doc(cfg(feature = "internals")))]
     #[allow(dead_code)]
     pub(crate) fn to_element(&self) -> Element<C> {
-        self.0 .0
+        self.0.0
     }
 
     /// Deserialize from bytes
@@ -221,7 +221,7 @@ where
 
     /// Verifies that a verifying share is valid aka not zero or the base point
     pub fn is_valid(&self) -> bool {
-        element_is_valid::<C>(&self.0 .0)
+        element_is_valid::<C>(&self.0.0)
     }
 }
 
@@ -281,12 +281,12 @@ where
 
     /// Returns inner element value
     pub fn value(&self) -> Element<C> {
-        self.0 .0
+        self.0.0
     }
 
     /// Verifies that a coefficient commitment is valid aka not zero or the base point
     pub fn is_valid(&self) -> bool {
-        element_is_valid::<C>(&self.0 .0)
+        element_is_valid::<C>(&self.0.0)
     }
 }
 
@@ -362,7 +362,7 @@ where
     /// element in the vector), or an error if the vector is empty.
     pub(crate) fn verifying_key(&self) -> Result<VerifyingKey<C>, Error<C>> {
         Ok(VerifyingKey::new(
-            self.0.first().ok_or(Error::MissingCommitment)?.0 .0,
+            self.0.first().ok_or(Error::MissingCommitment)?.0.0,
         ))
     }
 

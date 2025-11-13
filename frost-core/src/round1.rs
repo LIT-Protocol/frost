@@ -15,15 +15,15 @@ use rand_core::{CryptoRng, RngCore};
 use zeroize::Zeroize;
 
 use crate::{
-    serialization::{SerializableElement, SerializableScalar},
     Ciphersuite, Element, Error, Field, Group, Header,
+    serialization::{SerializableElement, SerializableScalar},
 };
 
 #[cfg(feature = "serialization")]
 use crate::serialization::{Deserialize, Serialize};
 use crate::util::{element_is_valid, scalar_is_valid};
 
-use super::{keys::SigningShare, Identifier};
+use super::{Identifier, keys::SigningShare};
 
 /// A scalar that is a signing nonce.
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -68,7 +68,7 @@ where
     pub(crate) fn to_scalar(
         self,
     ) -> <<<C as Ciphersuite>::Group as Group>::Field as Field>::Scalar {
-        self.0 .0
+        self.0.0
     }
 
     /// Generates a nonce from the given random bytes.
@@ -100,7 +100,7 @@ where
 
     /// Checks if the nonce is valid.
     pub fn is_valid(&self) -> bool {
-        scalar_is_valid::<C>(&self.0 .0)
+        scalar_is_valid::<C>(&self.0.0)
     }
 }
 
@@ -142,12 +142,12 @@ where
     }
 
     pub(crate) fn value(&self) -> Element<C> {
-        self.0 .0
+        self.0.0
     }
 
     /// Checks if the commitment is valid.
     pub fn is_valid(&self) -> bool {
-        element_is_valid::<C>(&self.0 .0)
+        element_is_valid::<C>(&self.0.0)
     }
 
     /// Deserialize [`NonceCommitment`] from bytes
@@ -350,8 +350,8 @@ where
 
     /// Checks if the commitments are valid.
     pub fn is_valid(&self) -> bool {
-        element_is_valid::<C>(&self.hiding.0 .0)
-            && element_is_valid::<C>(&self.binding.0 .0)
+        element_is_valid::<C>(&self.hiding.0.0)
+            && element_is_valid::<C>(&self.binding.0.0)
             && self.hiding.0 != self.binding.0
     }
 }

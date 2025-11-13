@@ -16,7 +16,7 @@ use frost_rerandomized::RandomizedCiphersuite;
 use frost_core as frost;
 
 use ark_serialize::{CanonicalDeserialize, CanonicalSerialize};
-use decaf377::{Element, Fr};
+use lit_rust_crypto::decaf377::{Element, Fr};
 use num_traits::{One, Zero};
 
 // Re-exports in our public API
@@ -39,7 +39,7 @@ fn hash_to_array(inputs: &[&[u8]]) -> [u8; 64] {
     }
     *state.state.finalize().as_array()
 }
-fn hash_to_scalar(domain: &[u8], msg: &[u8]) -> decaf377::Fr {
+fn hash_to_scalar(domain: &[u8], msg: &[u8]) -> Fr {
     HStar::default().update(domain).update(msg).finalize()
 }
 

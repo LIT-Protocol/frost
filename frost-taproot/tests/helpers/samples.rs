@@ -4,14 +4,14 @@ use std::collections::BTreeMap;
 
 use frost_core::{Ciphersuite, Element, Group, Scalar};
 use frost_taproot::{
+    Field, Signature, SigningPackage, VerifyingKey,
     keys::{
-        dkg::{round1, round2},
         KeyPackage, PublicKeyPackage, SecretShare, SigningShare, VerifiableSecretSharingCommitment,
         VerifyingShare,
+        dkg::{round1, round2},
     },
     round1::{NonceCommitment, SigningCommitments},
     round2::SignatureShare,
-    Field, Signature, SigningPackage, VerifyingKey,
 };
 
 type C = frost_taproot::Secp256K1Taproot;

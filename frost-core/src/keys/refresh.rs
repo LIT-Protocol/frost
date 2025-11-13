@@ -8,18 +8,18 @@ use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 
 use crate::{
+    Ciphersuite, CryptoRng, Error, Field, Group, Header, Identifier, RngCore,
     keys::dkg::{compute_proof_of_knowledge, round1, round2},
     keys::{
+        CoefficientCommitment, PublicKeyPackage, SigningKey, SigningShare, VerifyingShare,
         evaluate_polynomial, generate_coefficients, generate_secret_polynomial,
-        generate_secret_shares, validate_num_of_signers, CoefficientCommitment, PublicKeyPackage,
-        SigningKey, SigningShare, VerifyingShare,
+        generate_secret_shares, validate_num_of_signers,
     },
-    Ciphersuite, CryptoRng, Error, Field, Group, Header, Identifier, RngCore,
 };
 
 use core::iter;
 
-use super::{dkg::round1::Package, KeyPackage, SecretShare, VerifiableSecretSharingCommitment};
+use super::{KeyPackage, SecretShare, VerifiableSecretSharingCommitment, dkg::round1::Package};
 
 /// Generates new zero key shares and a public key package using a trusted
 /// dealer Building a new public key package is done by taking the verifying

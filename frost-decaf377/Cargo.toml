@@ -18,14 +18,11 @@ rustdoc-args = ["--cfg", "docsrs"]
 [dependencies]
 ark-serialize = "0.4"
 blake2b_simd = { version = "1", default-features = false }
-document-features.workspace = true
-group = "0.13"
-decaf377 = { version = "0.10", git = "https://github.com/LIT-Protocol/decaf377.git"  }
 frost-core = { path = "../frost-core", version = "2.2.0", default-features = false }
 frost-rerandomized = { path = "../frost-rerandomized", version = "2.2.0", default-features = false }
+lit-rust-crypto = { workspace = true, features = ["decaf377-default"] }
 num-traits = "0.2"
 rand_core.workspace = true
-sha2 = { version = "0.10.2", default-features = false }
 
 [dev-dependencies]
 criterion.workspace = true

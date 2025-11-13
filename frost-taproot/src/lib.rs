@@ -14,16 +14,16 @@ use alloc::collections::BTreeMap;
 use frost_rerandomized::RandomizedCiphersuite;
 use k256::elliptic_curve::subtle::Choice;
 use k256::{
+    AffinePoint, ProjectivePoint, Scalar,
     elliptic_curve::{
+        Field as FFField, PrimeField,
         bigint::U256,
         group::prime::PrimeCurveAffine,
-        hash2curve::{hash_to_field, ExpandMsgXmd},
+        hash2curve::{ExpandMsgXmd, hash_to_field},
         ops::Reduce,
         point::AffineCoordinates,
         sec1::{FromEncodedPoint, ToEncodedPoint},
-        Field as FFField, PrimeField,
     },
-    AffinePoint, ProjectivePoint, Scalar,
 };
 use rand_core::{CryptoRng, RngCore};
 use sha2::{Digest, Sha256};

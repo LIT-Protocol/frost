@@ -10,13 +10,12 @@ use rand_core::{CryptoRng, RngCore};
 use subtle::ConditionallyNegatable;
 
 use crate::{
-    challenge,
+    BindingFactor, Challenge, Error, FieldError, GroupCommitment, GroupError, Identifier,
+    Signature, SigningKey, SigningPackage, VerifyingKey, challenge,
     keys::{KeyPackage, PublicKeyPackage, VerifyingShare},
     random_nonzero,
     round1::{self},
     round2::{self, SignatureShare},
-    BindingFactor, Challenge, Error, FieldError, GroupCommitment, GroupError, Identifier,
-    Signature, SigningKey, SigningPackage, VerifyingKey,
 };
 
 /// A prime order finite field GF(q) over which all scalar values for our prime order group can be

@@ -16,9 +16,11 @@ use frost_rerandomized::RandomizedCiphersuite;
 
 use frost_core as frost;
 
-use group::{ff::Field as FFField, ff::PrimeField};
-use group::{Group as GGroup, GroupEncoding};
-use pasta_curves::pallas::{Affine, Point, Scalar};
+use lit_rust_crypto::{
+    ff::{Field as FFField, PrimeField},
+    group::{Group as GGroup, GroupEncoding},
+    pallas::{Affine, Point, Scalar},
+};
 
 // Re-exports in our public API
 #[cfg(feature = "serde")]

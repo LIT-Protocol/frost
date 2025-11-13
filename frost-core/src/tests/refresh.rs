@@ -4,12 +4,12 @@ use rand_core::{CryptoRng, RngCore};
 
 use crate::keys::generate_with_dealer;
 use crate::keys::refresh::{
-    compute_refreshing_shares, refresh_dkg_part2, refresh_dkg_part_1, refresh_share,
+    compute_refreshing_shares, refresh_dkg_part_1, refresh_dkg_part2, refresh_share,
 };
 #[cfg(feature = "serialization")]
 use crate::keys::{PublicKeyPackage, SecretShare};
 use crate::{self as frost};
-use crate::{keys::KeyPackage, Ciphersuite, Error, Identifier, Signature, VerifyingKey};
+use crate::{Ciphersuite, Error, Identifier, Signature, VerifyingKey, keys::KeyPackage};
 
 use crate::tests::ciphersuite_generic::check_part3_different_participants;
 

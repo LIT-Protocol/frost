@@ -8,8 +8,8 @@ use crate as frost;
 use crate::keys::SigningShare;
 use crate::round2::SignatureShare;
 use crate::{
-    keys::PublicKeyPackage, Error, Field, Group, Identifier, Signature, SigningKey, SigningPackage,
-    VerifyingKey,
+    Error, Field, Group, Identifier, Signature, SigningKey, SigningPackage, VerifyingKey,
+    keys::PublicKeyPackage,
 };
 
 use crate::Ciphersuite;
