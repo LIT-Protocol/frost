@@ -7,13 +7,13 @@ extern crate alloc;
 
 use alloc::collections::BTreeMap;
 
-use curve25519_dalek::{
+use frost_rerandomized::RandomizedCiphersuite;
+use lit_rust_crypto::curve25519_dalek::{
     constants::RISTRETTO_BASEPOINT_POINT,
     ristretto::{CompressedRistretto, RistrettoPoint},
     scalar::Scalar,
     traits::Identity,
 };
-use frost_rerandomized::RandomizedCiphersuite;
 use rand_core::{CryptoRng, RngCore};
 use sha2::{Digest, Sha512};
 

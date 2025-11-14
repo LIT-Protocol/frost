@@ -116,10 +116,7 @@ impl Group for JubjubGroup {
     }
 
     fn generator() -> Self::Element {
-        let pt: ExtendedPoint = AffinePoint::from_bytes(&constants::SPENDAUTHSIG_BASEPOINT_BYTES)
-            .unwrap()
-            .into();
-        pt.into_subgroup().unwrap()
+        lit_rust_crypto::red_jubjub_signing_generator()
     }
 
     fn serialize(element: &Self::Element) -> Result<Self::Serialization, GroupError> {

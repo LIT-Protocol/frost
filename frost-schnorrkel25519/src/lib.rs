@@ -8,14 +8,14 @@ extern crate alloc;
 use alloc::collections::BTreeMap;
 
 use byte_strings::const_concat_bytes;
-use curve25519_dalek::{
+use frost_core as frost;
+use frost_rerandomized::RandomizedCiphersuite;
+use lit_rust_crypto::curve25519_dalek::{
     constants::RISTRETTO_BASEPOINT_POINT,
     ristretto::{CompressedRistretto, RistrettoPoint},
     scalar::Scalar,
     traits::Identity,
 };
-use frost_core as frost;
-use frost_rerandomized::RandomizedCiphersuite;
 use merlin::Transcript;
 use rand_core::{CryptoRng, RngCore};
 use schnorrkel::context::{SigningContext, SigningTranscript};

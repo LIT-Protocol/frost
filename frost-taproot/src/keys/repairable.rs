@@ -9,7 +9,7 @@ use alloc::collections::BTreeMap;
 // This is imported separately to make `gencode` work.
 // (if it were below, the position of the import would vary between ciphersuites
 //  after `cargo fmt`)
-use crate::{Ciphersuite, CryptoRng, Identifier, RngCore, Scalar, frost};
+use crate::{Ciphersuite, CryptoRng, Identifier, KScalar, RngCore, frost};
 use crate::{Error, Secp256K1Taproot};
 
 use super::{SecretShare, VerifiableSecretSharingCommitment};
@@ -26,7 +26,7 @@ pub fn repair_share_step_1<C: Ciphersuite, R: RngCore + CryptoRng>(
     share_i: &SecretShare,
     rng: &mut R,
     participant: Identifier,
-) -> Result<BTreeMap<Identifier, Scalar>, Error> {
+) -> Result<BTreeMap<Identifier, KScalar>, Error> {
     frost::keys::repairable::repair_share_step_1(helpers, share_i, rng, participant)
 }
 
@@ -37,7 +37,7 @@ pub fn repair_share_step_1<C: Ciphersuite, R: RngCore + CryptoRng>(
 /// `sigma` is the sum of all received `delta` and the `delta_i` generated for `helper_i`.
 ///
 /// Returns a scalar
-pub fn repair_share_step_2(deltas_j: &[Scalar]) -> Scalar {
+pub fn repair_share_step_2(deltas_j: &[KScalar]) -> KScalar {
     frost::keys::repairable::repair_share_step_2::<Secp256K1Taproot>(deltas_j)
 }
 
@@ -47,7 +47,7 @@ pub fn repair_share_step_2(deltas_j: &[Scalar]) -> Scalar {
 /// is made up of the `identifier`and `commitment` of the `participant` as well as the
 /// `value` which is the `SigningShare`.
 pub fn repair_share_step_3(
-    sigmas: &[Scalar],
+    sigmas: &[KScalar],
     identifier: Identifier,
     commitment: &VerifiableSecretSharingCommitment,
 ) -> SecretShare {

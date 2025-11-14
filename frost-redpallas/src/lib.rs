@@ -19,7 +19,7 @@ use frost_core as frost;
 use lit_rust_crypto::{
     ff::{Field as FFField, PrimeField},
     group::{Group as GGroup, GroupEncoding},
-    pallas::{Affine, Point, Scalar},
+    pallas::{Point, Scalar},
 };
 
 // Re-exports in our public API
@@ -117,10 +117,7 @@ impl Group for PallasGroup {
     }
 
     fn generator() -> Self::Element {
-        let pt: Point = Affine::from_bytes(&(constants::SPENDAUTHSIG_BASEPOINT_BYTES.into()))
-            .unwrap()
-            .into();
-        pt
+        lit_rust_crypto::red_pallas_signing_generator()
     }
 
     fn serialize(element: &Self::Element) -> Result<Self::Serialization, GroupError> {

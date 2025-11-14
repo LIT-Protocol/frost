@@ -34,7 +34,6 @@ categories = ["cryptography"]
 
 [workspace.dependencies]
 criterion = "0.7"
-curve25519-dalek = { version = "=4.3.0", features = ["rand_core"], package = "curve25519-dalek-ml" }
 document-features = "0.2.7"
 hex = { version  = "0.4.3", default-features = false, features = ["alloc"] }
 insta = { version = "1.31.0", features = ["yaml"] }
@@ -47,7 +46,10 @@ serde_json = "1.0"
 
 [workspace.dependencies.lit-rust-crypto]
 git = "https://github.com/LIT-Protocol/lit-rust-crypto"
-tag = "0.5.0"
+tag = "0.6.0"
+features = [
+    "rand_core",
+]
 
 [profile.test.package."*"]
 opt-level = 3

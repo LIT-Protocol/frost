@@ -12,18 +12,18 @@ use alloc::borrow::ToOwned;
 use alloc::collections::BTreeMap;
 
 use frost_rerandomized::RandomizedCiphersuite;
-use k256::elliptic_curve::subtle::Choice;
-use k256::{
-    AffinePoint, ProjectivePoint, Scalar,
+use lit_rust_crypto::{
+    ec_ops::Reduce,
     elliptic_curve::{
         Field as FFField, PrimeField,
         bigint::U256,
-        group::prime::PrimeCurveAffine,
-        hash2curve::{ExpandMsgXmd, hash_to_field},
-        ops::Reduce,
         point::AffineCoordinates,
         sec1::{FromEncodedPoint, ToEncodedPoint},
+        subtle::Choice,
     },
+    group::prime::PrimeCurveAffine,
+    hash2curve::{ExpandMsgXmd, hash_to_field},
+    k256::{AffinePoint, EncodedPoint, FieldBytes, ProjectivePoint, Scalar as KScalar, schnorr},
 };
 use rand_core::{CryptoRng, RngCore};
 use sha2::{Digest, Sha256};
@@ -48,16 +48,16 @@ pub type Error = frost_core::Error<Secp256K1Taproot>;
 pub struct Secp256K1TaprootScalarField;
 
 impl Field for Secp256K1TaprootScalarField {
-    type Scalar = Scalar;
+    type Scalar = KScalar;
 
     type Serialization = [u8; 32];
 
     fn zero() -> Self::Scalar {
-        Scalar::ZERO
+        KScalar::ZERO
     }
 
     fn one() -> Self::Scalar {
-        Scalar::ONE
+        KScalar::ONE
     }
 
     fn invert(scalar: &Self::Scalar) -> Result<Self::Scalar, FieldError> {
@@ -70,7 +70,7 @@ impl Field for Secp256K1TaprootScalarField {
     }
 
     fn random<R: RngCore + CryptoRng>(rng: &mut R) -> Self::Scalar {
-        Scalar::random(rng)
+        KScalar::random(rng)
     }
 
     fn serialize(scalar: &Self::Scalar) -> Self::Serialization {
@@ -78,8 +78,8 @@ impl Field for Secp256K1TaprootScalarField {
     }
 
     fn deserialize(buf: &Self::Serialization) -> Result<Self::Scalar, FieldError> {
-        let field_bytes: &k256::FieldBytes = buf.into();
-        match Scalar::from_repr(*field_bytes).into() {
+        let field_bytes: &FieldBytes = buf.into();
+        match KScalar::from_repr(*field_bytes).into() {
             Some(s) => Ok(s),
             None => Err(FieldError::MalformedScalar),
         }
@@ -112,7 +112,7 @@ impl Group for Secp256K1TaprootGroup {
     type Serialization = [u8; 33];
 
     fn cofactor() -> <Self::Field as Field>::Scalar {
-        Scalar::ONE
+        KScalar::ONE
     }
 
     fn identity() -> Self::Element {
@@ -136,7 +136,7 @@ impl Group for Secp256K1TaprootGroup {
 
     fn deserialize(buf: &Self::Serialization) -> Result<Self::Element, GroupError> {
         let encoded_point =
-            k256::EncodedPoint::from_bytes(buf).map_err(|_| GroupError::MalformedElement)?;
+            EncodedPoint::from_bytes(buf).map_err(|_| GroupError::MalformedElement)?;
 
         match Option::<AffinePoint>::from(AffinePoint::from_encoded_point(&encoded_point)) {
             Some(point) => {
@@ -172,9 +172,9 @@ fn hash_to_array(inputs: &[&[u8]]) -> [u8; 32] {
     output
 }
 
-fn hash_to_scalar(domain: &[u8], msg: &[u8]) -> Scalar {
+fn hash_to_scalar(domain: &[u8], msg: &[u8]) -> KScalar {
     let mut u = [Secp256K1TaprootScalarField::zero()];
-    hash_to_field::<ExpandMsgXmd<Sha256>, Scalar>(&[msg], &[domain], &mut u)
+    hash_to_field::<ExpandMsgXmd<Sha256>, KScalar>(&[msg], &[domain], &mut u)
         .expect("should never return error according to error cases described in ExpandMsgXmd");
     u[0]
 }
@@ -217,7 +217,7 @@ impl Ciphersuite for Secp256K1Taproot {
             digest.update(tag_hash);
             digest
         }
-        <Scalar as Reduce<U256>>::reduce_bytes(
+        <KScalar as Reduce<U256>>::reduce_bytes(
             &tagged_hash(CHALLENGE_TAG).chain_update(m).finalize(),
         )
     }
@@ -264,9 +264,9 @@ impl Ciphersuite for Secp256K1Taproot {
         signature: &frost_core::Signature<Self>,
         public_key: &frost_core::VerifyingKey<Self>,
     ) -> Result<(), frost_core::Error<Self>> {
-        let vk = k256::schnorr::VerifyingKey::from_bytes(&public_key.serialize()?[1..])
+        let vk = schnorr::VerifyingKey::from_bytes(&public_key.serialize()?[1..])
             .map_err(|_| Error::MalformedVerifyingKey)?;
-        let sig = k256::schnorr::Signature::try_from(&signature.serialize()?[1..])
+        let sig = schnorr::Signature::try_from(&signature.serialize()?[1..])
             .map_err(|_| Error::MalformedSignature)?;
         vk.verify_prehash(msg, &sig)
             .map_err(|_| Error::InvalidSignature)

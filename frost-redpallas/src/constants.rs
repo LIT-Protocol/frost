@@ -10,10 +10,10 @@
 // /// The byte-encoding of the basepoint for `SpendAuthSig`.
 // // Extracted ad-hoc from librustzcash
 // // XXX add tests for this value.
-pub const SPENDAUTHSIG_BASEPOINT_BYTES: [u8; 32] = [
-    99, 201, 117, 184, 132, 114, 26, 141, 12, 161, 112, 123, 227, 12, 127, 12, 95, 68, 95, 62, 124,
-    24, 141, 59, 6, 214, 241, 40, 179, 35, 85, 183,
-];
+// pub const SPENDAUTHSIG_BASEPOINT_BYTES: [u8; 32] = [
+//     99, 201, 117, 184, 132, 114, 26, 141, 12, 161, 112, 123, 227, 12, 127, 12, 95, 68, 95, 62, 124,
+//     24, 141, 59, 6, 214, 241, 40, 179, 35, 85, 183,
+// ];
 
 // /// The byte-encoding of the basepoint for `BindingSig`.
 // // Extracted ad-hoc from librustzcash
