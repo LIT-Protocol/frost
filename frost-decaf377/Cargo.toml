@@ -20,7 +20,7 @@ ark-serialize = "0.4"
 blake2b_simd = { version = "1", default-features = false }
 document-features.workspace = true
 group = "0.13"
-decaf377 = { version = "0.10", git = "https://github.com/LIT-Protocol/decaf377.git"  }
+decaf377 = { package="decaf377_plus" version = "0.10", git = "https://github.com/LIT-Protocol/decaf377.git"  }
 frost-core = { path = "../frost-core", version = "2.1.0", default-features = false }
 frost-rerandomized = { path = "../frost-rerandomized", version = "2.1.0", default-features = false }
 num-traits = "0.2"
