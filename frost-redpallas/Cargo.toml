@@ -1,5 +1,5 @@
 [package]
-name = "frost-redpallas"
+name = "lit-frost-redpallas"
 edition = "2021"
 version = "1.0.0"
 authors = [
@@ -7,7 +7,7 @@ authors = [
 ]
 readme = "README.md"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ZcashFoundation/frost"
+repository = "https://github.com/LIT-Protocol/frost"
 categories = ["cryptography"]
 keywords = ["cryptography", "crypto", "threshold", "signature"]
 description = "A Schnorr signature scheme over the NIST P-256 curve that supports FROST."
@@ -20,15 +20,15 @@ rustdoc-args = ["--cfg", "docsrs"]
 blake2b_simd = { version = "1", default-features = false }
 document-features = "0.2.8"
 group = "0.13"
-pasta_curves = { version = "0.5", git = "https://github.com/LIT-Protocol/pasta_curves", features = ["alloc", "serde"] }
-frost-core = { path = "../frost-core", version = "1.0.0" }
-frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0" }
+pasta_curves = { version = "0.5", features = ["alloc", "serde"], package = "pasta_curves_plus" }
+frost-core = { path = "../frost-core", version = "1.0.0", package = "lit-frost-core" }
+frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0", package = "lit-frost-rerandomized" }
 rand_core = "0.6"
 
 [dev-dependencies]
 criterion = "0.7"
-frost-core = { path = "../frost-core", version = "1.0.0", features = ["test-impl"] }
-frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0", features = ["test-impl"] }
+frost-core = { path = "../frost-core", version = "1.0.0", features = ["test-impl"], package = "lit-frost-core" }
+frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0", features = ["test-impl"], package = "lit-frost-rerandomized" }
 insta = { version = "1.38.0", features = ["yaml"] }
 hex = "0.4.3"
 lazy_static = "1.4"

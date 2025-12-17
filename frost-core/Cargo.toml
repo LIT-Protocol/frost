@@ -1,5 +1,5 @@
 [package]
-name = "frost-core"
+name = "lit-frost-core"
 edition = "2021"
 # When releasing to crates.io:
 # - Update CHANGELOG.md
@@ -9,10 +9,11 @@ authors = [
     "Deirdre Connolly <durumcrustulum@gmail.com>",
     "Chelsea Komlo <me@chelseakomlo.com>",
     "Conrado Gouvea <conradoplg@gmail.com>",
+    "Michael Lodder <redmike7@gmail.com>",
 ]
 readme = "README.md"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ZcashFoundation/frost"
+repository = "https://github.com/LIT-Protocol/frost"
 categories = ["cryptography"]
 keywords = ["cryptography", "crypto", "threshold", "signature", "schnorr"]
 description = "Types and traits to support implementing Flexible Round-Optimized Schnorr Threshold signature schemes (FROST)."

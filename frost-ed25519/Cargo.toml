@@ -1,5 +1,5 @@
 [package]
-name = "frost-ed25519"
+name = "lit-frost-ed25519"
 edition = "2021"
 # When releasing to crates.io:
 # - Update html_root_url
@@ -13,7 +13,7 @@ authors = [
 ]
 readme = "README.md"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ZcashFoundation/frost"
+repository = "https://github.com/LIT-Protocol/frost"
 categories = ["cryptography"]
 keywords = ["cryptography", "crypto", "ed25519", "threshold", "signature"]
 description = "A Schnorr signature scheme over Ed25519 that supports FROST."
@@ -25,15 +25,15 @@ rustdoc-args = ["--cfg", "docsrs"]
 [dependencies]
 curve25519-dalek = { version = "=4.2.2", features = ["rand_core"], package = "curve25519-dalek-ml" }
 document-features = "0.2.7"
-frost-core = { path = "../frost-core", version = "1.0.0" }
-frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0" }
+frost-core = { path = "../frost-core", version = "1.0.0", package = "lit-frost-core" }
+frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0", package = "lit-frost-rerandomized" }
 rand_core = "0.6"
 sha2 = "0.10"
 
 [dev-dependencies]
 criterion = "0.5"
-frost-core = { path = "../frost-core", version = "1.0.0", features = ["test-impl"] }
-frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0", features = ["test-impl"] }
+frost-core = { path = "../frost-core", version = "1.0.0", features = ["test-impl"], package = "lit-frost-core" }
+frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0", features = ["test-impl"], package = "lit-frost-rerandomized" }
 ed25519-dalek = "2.1.1"
 insta = { version = "1.36.0", features = ["yaml"] }
 hex = "0.4"

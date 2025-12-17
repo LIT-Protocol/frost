@@ -1,5 +1,5 @@
 [package]
-name = "frost-p384"
+name = "lit-frost-p384"
 edition = "2021"
 # When releasing to crates.io:
 # - Update html_root_url
@@ -13,7 +13,7 @@ authors = [
 ]
 readme = "README.md"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ZcashFoundation/frost"
+repository = "https://github.com/LIT-Protocol/frost"
 categories = ["cryptography"]
 keywords = ["cryptography", "crypto", "threshold", "signature"]
 description = "A Schnorr signature scheme over the NIST P-256 curve that supports FROST."
@@ -24,16 +24,16 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 document-features = "0.2.7"
-p384 = { version = "0.13", features = ["hash2curve"], git = "https://github.com/LIT-Protocol/elliptic-curves.git" }
-frost-core = { path = "../frost-core", version = "1.0.0" }
-frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0" }
+p384 = { version = "0.13", features = ["hash2curve"], package = "lit-p384" }
+frost-core = { path = "../frost-core", version = "1.0.0", package = "lit-frost-core" }
+frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0", package = "lit-frost-rerandomized" }
 rand_core = "0.6"
 sha2 = "0.10.2"
 
 [dev-dependencies]
 criterion = "0.5"
-frost-core = { path = "../frost-core", version = "1.0.0-rc.0", features = ["test-impl"] }
-frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0-rc.0", features = ["test-impl"] }
+frost-core = { path = "../frost-core", version = "1.0.0", features = ["test-impl"], package = "lit-frost-core" }
+frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0", features = ["test-impl"], package = "lit-frost-rerandomized" }
 insta = { version = "1.31.0", features = ["yaml"] }
 hex = "0.4.3"
 lazy_static = "1.4"
