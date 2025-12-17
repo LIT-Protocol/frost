@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
     "frost-core",
+    "frost-decaf377",
     "frost-ed25519",
     "frost-ed448",
     "frost-p256",
