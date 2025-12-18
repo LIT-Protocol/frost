@@ -1,5 +1,5 @@
 [package]
-name = "frost-schnorrkel25519"
+name = "lit-frost-schnorrkel25519"
 edition = "2021"
 # When releasing to crates.io:
 # - Update html_root_url
