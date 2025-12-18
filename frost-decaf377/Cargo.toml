@@ -28,6 +28,7 @@ blake2b_simd = { version = "1", default-features = false }
 frost-core = { path = "../frost-core", version = "1.0.0", package = "lit-frost-core" }
 frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0", package = "lit-frost-rerandomized" }
 decaf377 = { version = "0.10", package = "decaf377_plus", features = ["frost-dkg"] }
+rand_core = "0.6"
 num-traits = "0.2"
 schnorrkel = "0.11"
 
