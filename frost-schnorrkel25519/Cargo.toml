@@ -1,5 +1,5 @@
 [package]
-name = "lit-frost-decaf377"
+name = "frost-schnorrkel25519"
 edition = "2021"
 # When releasing to crates.io:
 # - Update html_root_url
@@ -16,19 +16,19 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/LIT-Protocol/frost"
 categories = ["cryptography"]
 keywords = ["cryptography", "crypto", "threshold", "signature"]
-description = "A Schnorr signature scheme over the Decaf377 curve that supports FROST."
+description = "A Schnorr signature scheme over the prime-order Ristretto group that supports FROST."
 
 [package.metadata.docs.rs]
 features = ["serde"]
 rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
-ark-serialize = "0.4"
-blake2b_simd = { version = "1", default-features = false }
+curve25519-dalek = { version = "=4.2.2", features = ["rand_core"], package = "curve25519-dalek-ml" }
+byte-strings = "0.3"
 frost-core = { path = "../frost-core", version = "1.0.0", package = "lit-frost-core" }
 frost-rerandomized = { path = "../frost-rerandomized", version = "1.0.0", package = "lit-frost-rerandomized" }
-decaf377 = { version = "0.10", package = "decaf377_plus", features = ["frost-dkg"] }
-num-traits = "0.2"
+merlin = "3"
+rand_core = "0.6"
 schnorrkel = "0.11"
 
 [dev-dependencies]
