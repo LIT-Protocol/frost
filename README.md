@@ -1,3 +1,10 @@
+<!-- lit-archived-banner -->
+> ⚠️ **This repository is archived and is no longer maintained.**
+>
+> Lit Protocol has kept it publicly available for **educational and reference purposes only**. Code here may be out of date and is not supported.
+
+---
+
 # ZF FROST (Flexible Round-Optimised Schnorr Threshold signatures)
 
 [![CI](https://github.com/ZcashFoundation/frost/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/ZcashFoundation/frost/actions/workflows/main.yml)
